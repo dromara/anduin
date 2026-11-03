@@ -70,7 +70,7 @@
         <bcprov-jdk18on.version>1.86</bcprov-jdk18on.version>
         <commons-collections4.version>4.6.0</commons-collections4.version>
         <commons-lang3.version>3.21.0</commons-lang3.version>
-        <guava.version>33.7.2-jre</guava.version>
+        <guava.version>33.8.0-jre</guava.version>
         <caffeine.version>3.3.1</caffeine.version>
         <jackson.version>3.2.4</jackson.version>
         <jjwt.version>0.13.0</jjwt.version>

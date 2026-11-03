@@ -5,6 +5,7 @@
 
 - [升级] maven-surefire-plugin 版本升级至 3.6.1
 - [升级] alipay-sdk-java 版本升级至 4.40.1061.ALL
+- [升级] guava 版本升级至 33.8.0-jre
 
 ## 2.2.0
 - 提取授权码模式获取 Token 参数定义通用方法，去除大量重复代码
