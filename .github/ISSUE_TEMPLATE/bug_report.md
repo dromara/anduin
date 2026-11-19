@@ -16,7 +16,7 @@ assignees: ''
 
 ## Environment
 
-- Anduin Version(e.g. `2.2.0`): 
+- Anduin Version(e.g. `2.3.0`): 
 
 ### Minimal test code / Steps to reproduce the issue
 1.
