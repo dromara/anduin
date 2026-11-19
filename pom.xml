@@ -65,7 +65,7 @@
         <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
         <maven-surefire-plugin.version>3.6.1</maven-surefire-plugin.version>
 
-        <alipay-sdk-java.version>4.40.1061.ALL</alipay-sdk-java.version>
+        <alipay-sdk-java.version>4.40.1067.ALL</alipay-sdk-java.version>
         <bcpkix-jdk18on.version>1.86</bcpkix-jdk18on.version>
         <bcprov-jdk18on.version>1.86</bcprov-jdk18on.version>
         <commons-collections4.version>4.6.0</commons-collections4.version>
