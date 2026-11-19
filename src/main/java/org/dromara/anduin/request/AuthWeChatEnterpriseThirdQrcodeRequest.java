@@ -4,16 +4,12 @@ import org.dromara.anduin.cache.AuthStateCache;
 import org.dromara.anduin.config.AuthConfig;
 import org.dromara.anduin.config.AuthDefaultSource;
 import org.dromara.anduin.constant.Keys;
-import org.dromara.anduin.enums.AuthResponseStatus;
 import org.dromara.anduin.exception.AuthException;
 import org.dromara.anduin.http.UnifiedHttpClient;
 import org.dromara.anduin.http.UrlBuilder;
-import org.dromara.anduin.log.Log;
 import org.dromara.anduin.model.AuthCallback;
-import org.dromara.anduin.model.AuthResponse;
 import org.dromara.anduin.model.AuthToken;
 import org.dromara.anduin.model.AuthUser;
-import org.dromara.anduin.utils.AuthChecker;
 import org.dromara.anduin.utils.JsonUtils;
 import tools.jackson.databind.JsonNode;
 
@@ -29,6 +25,7 @@ import java.util.Map;
  * @since 1.16.3
  */
 public class AuthWeChatEnterpriseThirdQrcodeRequest extends AbstractAuthWeChatEnterpriseRequest {
+
     public AuthWeChatEnterpriseThirdQrcodeRequest(AuthConfig config) {
         super(config, AuthDefaultSource.WECHAT_ENTERPRISE_QRCODE_THIRD);
     }
@@ -45,21 +42,6 @@ public class AuthWeChatEnterpriseThirdQrcodeRequest extends AbstractAuthWeChatEn
                 .queryParam(Keys.OAUTH2.STATE, getRealState(state))
                 .queryParam("usertype", config.getUsertype())
                 .build();
-    }
-
-    @Override
-    public AuthResponse<AuthUser> login(AuthCallback authCallback) {
-        try {
-            if (!config.isIgnoreCheckState()) {
-                AuthChecker.checkState(authCallback.getState(), source, authStateCache);
-            }
-            AuthToken authToken = this.getAccessToken(authCallback);
-            AuthUser user = this.getUserInfo(authToken);
-            return AuthResponse.<AuthUser>builder().code(AuthResponseStatus.SUCCESS.getCode()).data(user).build();
-        } catch (Exception e) {
-            Log.error("Failed to login with oauth authorization.", e);
-            return this.responseError(e);
-        }
     }
 
     @Override

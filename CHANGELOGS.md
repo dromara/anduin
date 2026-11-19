@@ -3,6 +3,7 @@
 - [重构] 使用第三方组件常量值，替换原有自定义常量
 - [重构] 使用 AuthRequest 定义的规范方式，重构部分第三方认证代码
 - [重构] 改用 slf4j 门面替换内置 Log 工具类，以便与 Spring Boot 等框架形成统一的日志体系
+- [重构] 删除 AuthWeChatEnterpriseThirdQrcodeRequest login 方法，直接使用 AuthDefaultRequest 中的 login 方法，以消除重复代码
 
 - [升级] maven-surefire-plugin 版本升级至 3.6.1
 - [升级] alipay-sdk-java 版本升级至 4.40.1067.ALL
