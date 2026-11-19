@@ -92,37 +92,69 @@ class AuthRequestBuilderDiagnosticsTest {
 
     private static AuthRequestBuilder builder(Class<? extends AuthDefaultRequest> type) {
         AuthSource source = new AuthSource() {
-            public String authorize() { return "https://example.com"; }
-            public String accessToken() { return "https://example.com"; }
-            public String userInfo() { return "https://example.com"; }
-            public String getName() { return "CUSTOM"; }
-            public Class<? extends AuthDefaultRequest> getTargetClass() { return type; }
+            public String authorize() {
+                return "https://example.com";
+            }
+
+            public String accessToken() {
+                return "https://example.com";
+            }
+
+            public String userInfo() {
+                return "https://example.com";
+            }
+
+            public String getName() {
+                return "CUSTOM";
+            }
+
+            public Class<? extends AuthDefaultRequest> getTargetClass() {
+                return type;
+            }
         };
         return AuthRequestBuilder.builder().source("CUSTOM").extendSource(source).authConfig(config());
     }
 
     public static class ValidationRequest extends AuthGithubRequest {
-        public ValidationRequest(AuthConfig config) { super(config); throw VALIDATION; }
-        public ValidationRequest(AuthConfig config, AuthStateCache cache) { super(config, cache); throw VALIDATION; }
+        public ValidationRequest(AuthConfig config) {
+            super(config);
+            throw VALIDATION;
+        }
+
+        public ValidationRequest(AuthConfig config, AuthStateCache cache) {
+            super(config, cache);
+            throw VALIDATION;
+        }
     }
 
     public static class BrokenRequest extends AuthGithubRequest {
-        public BrokenRequest(AuthConfig config) { super(config); throw CONSTRUCTION; }
+        public BrokenRequest(AuthConfig config) {
+            super(config);
+            throw CONSTRUCTION;
+        }
     }
 
     public static class MissingConstructorRequest extends AuthGithubRequest {
-        public MissingConstructorRequest(AuthConfig config, String ignored) { super(config); }
+        public MissingConstructorRequest(AuthConfig config, String ignored) {
+            super(config);
+        }
     }
 
     public static class LinkageRequest extends AuthGithubRequest {
-        public LinkageRequest(AuthConfig config) { super(config); throw new NoClassDefFoundError("secret-fixture"); }
+        public LinkageRequest(AuthConfig config) {
+            super(config);
+            throw new NoClassDefFoundError("secret-fixture");
+        }
     }
 
     public static class InitializationFailureRequest extends AuthGithubRequest {
         static {
             failInitialization();
         }
-        public InitializationFailureRequest(AuthConfig config) { super(config); }
+
+        public InitializationFailureRequest(AuthConfig config) {
+            super(config);
+        }
 
         private static void failInitialization() {
             throw new NoClassDefFoundError("secret-fixture");

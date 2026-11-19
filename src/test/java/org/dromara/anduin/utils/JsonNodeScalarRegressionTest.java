@@ -3,10 +3,12 @@ package org.dromara.anduin.utils;
 import org.junit.jupiter.api.Test;
 import tools.jackson.databind.JsonNode;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class JsonNodeScalarRegressionTest {
-    @Test void stringLookupPreservesNumericAndBooleanScalarValues() {
+    @Test
+    void stringLookupPreservesNumericAndBooleanScalarValues() {
         JsonNode node = JsonUtils.getObjectMapper().readTree("{\"id\":4294967296,\"sex\":2,\"enabled\":true,"
                 + "\"disabled\":false,\"name\":\"Ada\",\"decimal\":1.25}");
         assertEquals("4294967296", JsonNodeUtils.findStringValue(node, "id"));
@@ -17,7 +19,8 @@ class JsonNodeScalarRegressionTest {
         assertEquals("Ada", JsonNodeUtils.findStringValue(node, "name"));
     }
 
-    @Test void stringLookupDoesNotConvertNullOrContainers() {
+    @Test
+    void stringLookupDoesNotConvertNullOrContainers() {
         JsonNode node = JsonUtils.getObjectMapper().readTree("{\"empty\":null,\"object\":{},\"array\":[]}");
         assertNull(JsonNodeUtils.findStringValue(node, "empty"));
         assertNull(JsonNodeUtils.findStringValue(node, "object"));

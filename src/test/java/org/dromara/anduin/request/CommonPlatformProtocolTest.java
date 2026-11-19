@@ -31,15 +31,23 @@ class CommonPlatformProtocolTest {
     private RecordingHttpAdapter http;
     private final MemoryStateCache state = new MemoryStateCache();
 
-    @BeforeEach void installTransport() { http = new RecordingHttpAdapter(); }
-    @AfterEach void restoreTransport() { http.close(); }
+    @BeforeEach
+    void installTransport() {
+        http = new RecordingHttpAdapter();
+    }
+
+    @AfterEach
+    void restoreTransport() {
+        http.close();
+    }
 
     private AuthConfig config() {
         return AuthConfig.builder().clientId("test-client").clientSecret("test-secret")
                 .redirectUri(REDIRECT).build();
     }
 
-    @Test void githubAuthorizePreservesStateAndRequestedScopes() {
+    @Test
+    void githubAuthorizePreservesStateAndRequestedScopes() {
         AuthConfig config = config();
         config.setScopes(List.of("read:user", "user:email"));
         Map<String, String> query = authorize(new AuthGithubRequest(config, state),
@@ -47,7 +55,8 @@ class CommonPlatformProtocolTest {
         assertEquals("read:user user:email", query.get("scope"));
     }
 
-    @Test void giteeAuthorizePreservesStateAndRequestedScopes() {
+    @Test
+    void giteeAuthorizePreservesStateAndRequestedScopes() {
         AuthConfig config = config();
         config.setScopes(List.of("user_info", "emails"));
         Map<String, String> query = authorize(new AuthGiteeRequest(config, state),
@@ -55,13 +64,15 @@ class CommonPlatformProtocolTest {
         assertEquals("user_info emails", query.get("scope"));
     }
 
-    @Test void wechatAuthorizeUsesAppIdAndLoginScope() {
+    @Test
+    void wechatAuthorizeUsesAppIdAndLoginScope() {
         Map<String, String> query = authorize(new AuthWeChatOpenRequest(config(), state),
                 "https://open.weixin.qq.com/connect/qrconnect", "appid");
         assertEquals("snsapi_login", query.get("scope"));
     }
 
-    @Test void dingTalkAuthorizeUsesConsentAndCommaSeparatedScopes() {
+    @Test
+    void dingTalkAuthorizeUsesConsentAndCommaSeparatedScopes() {
         AuthConfig config = config();
         config.setScopes(List.of("openid", "corpid"));
         Map<String, String> query = authorize(new AuthDingTalkV2Request(config, state),
@@ -70,7 +81,8 @@ class CommonPlatformProtocolTest {
         assertEquals("consent", query.get("prompt"));
     }
 
-    @Test void missingStateIsGeneratedAndCachedForEveryPlatform() {
+    @Test
+    void missingStateIsGeneratedAndCachedForEveryPlatform() {
         for (AuthDefaultRequest request : List.of(new AuthGithubRequest(config(), state),
                 new AuthGiteeRequest(config(), state), new AuthWeChatOpenRequest(config(), state),
                 new AuthDingTalkV2Request(config(), state))) {
@@ -82,7 +94,8 @@ class CommonPlatformProtocolTest {
         assertTrue(http.requests().isEmpty());
     }
 
-    @Test void githubExchangesTokenAndMapsUserWithAuthorizationHeader() {
+    @Test
+    void githubExchangesTokenAndMapsUserWithAuthorizationHeader() {
         http.respond("access_token=" + "github-token" + "&token_type=" + "bearer" + "&scope=" + "read%3Auser");
         http.respond(developerUser("location"));
         AuthGithubRequest request = new AuthGithubRequest(config(), state);
@@ -98,7 +111,8 @@ class CommonPlatformProtocolTest {
         assertEquals("token github-token", http.requests().get(1).headers().get("Authorization"));
     }
 
-    @Test void giteeExchangesJsonTokenAndMapsUserWithQueryToken() {
+    @Test
+    void giteeExchangesJsonTokenAndMapsUserWithQueryToken() {
         http.respond("{\"access_token\":\"gitee-token\",\"token_type\":\"bearer\",\"expires_in\":3600,"
                 + "\"refresh_token\":\"gitee-refresh\",\"scope\":\"user_info\"}");
         http.respond(developerUser("address"));
@@ -114,7 +128,8 @@ class CommonPlatformProtocolTest {
         assertRequest(1, "GET", "https://gitee.com/api/v5/user", Map.of("access_token", "gitee-token"));
     }
 
-    @Test void wechatExchangesTokenAndMapsOpenIdGenderAndUnionId() {
+    @Test
+    void wechatExchangesTokenAndMapsOpenIdGenderAndUnionId() {
         http.respond(wechatToken("wechat-token", "refresh-token"));
         http.respond("{\"openid\":\"openid-1\",\"nickname\":\"Ada\",\"sex\":2,"
                 + "\"country\":\"CN\",\"province\":\"ZJ\",\"city\":\"HZ\","
@@ -143,7 +158,8 @@ class CommonPlatformProtocolTest {
                 Map.of("access_token", "wechat-token", "openid", "openid-1", "lang", "zh_CN"));
     }
 
-    @Test void wechatRefreshUsesRefreshGrantAndReturnsNewToken() {
+    @Test
+    void wechatRefreshUsesRefreshGrantAndReturnsNewToken() {
         http.respond(wechatToken("new-token", "new-refresh"));
         AuthToken old = AuthToken.builder().accessToken("old-token").refreshToken("old-refresh").build();
         var response = new AuthWeChatOpenRequest(config(), state).refresh(old);
@@ -157,7 +173,8 @@ class CommonPlatformProtocolTest {
                 Map.of("appid", "test-client", "refresh_token", "old-refresh", "grant_type", "refresh_token"));
     }
 
-    @Test void dingTalkExchangesTokenAndMapsUnionIdAndVisitorFlag() {
+    @Test
+    void dingTalkExchangesTokenAndMapsUnionIdAndVisitorFlag() {
         http.respond("{\"accessToken\":\"ding-token\",\"expireIn\":7200,\"refreshToken\":\"ding-refresh\",\"corpId\":\"corp-1\"}");
         http.respond("{\"openId\":\"ding-open\",\"unionId\":\"ding-union\",\"nick\":\"Ada\","
                 + "\"avatarUrl\":\"https://img.example/ada.png\",\"visitor\":true}");
@@ -185,7 +202,8 @@ class CommonPlatformProtocolTest {
         assertEquals("ding-token", http.requests().get(1).headers().get("x-acs-dingtalk-access-token"));
     }
 
-    @Test void githubRejectsTokenAndUserProviderErrors() {
+    @Test
+    void githubRejectsTokenAndUserProviderErrors() {
         AuthGithubRequest request = new AuthGithubRequest(config(), state);
         http.respond("error=bad_verification_code&error_description=code+expired");
         assertEquals("code expired", assertThrows(AuthException.class, () -> request.getAccessToken(callback())).getMessage());
@@ -195,7 +213,8 @@ class CommonPlatformProtocolTest {
         assertEquals(2, http.requests().size());
     }
 
-    @Test void giteeRejectsTokenAndUserProviderErrors() {
+    @Test
+    void giteeRejectsTokenAndUserProviderErrors() {
         AuthGiteeRequest request = new AuthGiteeRequest(config(), state);
         http.respond("{\"error\":\"invalid_grant\",\"error_description\":\"code expired\"}");
         assertEquals("code expired", assertThrows(AuthException.class, () -> request.getAccessToken(callback())).getMessage());
@@ -205,7 +224,8 @@ class CommonPlatformProtocolTest {
         assertEquals(2, http.requests().size());
     }
 
-    @Test void wechatRejectsTokenUserAndRefreshProviderErrors() {
+    @Test
+    void wechatRejectsTokenUserAndRefreshProviderErrors() {
         AuthWeChatOpenRequest request = new AuthWeChatOpenRequest(config(), state);
         String error = "{\"errcode\":40029,\"errmsg\":\"invalid code\"}";
         http.respond(error);
@@ -217,7 +237,8 @@ class CommonPlatformProtocolTest {
         assertEquals(3, http.requests().size());
     }
 
-    @Test void dingTalkRejectsTokenResponseWithoutAccessToken() {
+    @Test
+    void dingTalkRejectsTokenResponseWithoutAccessToken() {
         http.respond("{\"code\":\"InvalidParameter\",\"message\":\"invalid authorization code\",\"requestid\":\"request-1\"}");
         AuthException error = assertThrows(AuthException.class,
                 () -> new AuthDingTalkV2Request(config(), state).getAccessToken(callback()));
@@ -259,9 +280,13 @@ class CommonPlatformProtocolTest {
                 "grant_type", "authorization_code", "redirect_uri", REDIRECT);
     }
 
-    private static AuthCallback callback() { return AuthCallback.builder().code("test-code").build(); }
+    private static AuthCallback callback() {
+        return AuthCallback.builder().code("test-code").build();
+    }
 
-    private static String endpoint(String url) { return url.split("\\?", 2)[0]; }
+    private static String endpoint(String url) {
+        return url.split("\\?", 2)[0];
+    }
 
     private static Map<String, String> query(String url) {
         String raw = URI.create(url).getRawQuery();
@@ -305,9 +330,25 @@ class CommonPlatformProtocolTest {
 
     private static final class MemoryStateCache implements AuthStateCache {
         private final Map<String, String> values = new HashMap<>();
-        @Override public void cache(String key, String value) { values.put(key, value); }
-        @Override public String get(String key) { return values.get(key); }
-        @Override public boolean containsKey(String key) { return values.containsKey(key); }
-        @Override public void expire(String key) { values.remove(key); }
+
+        @Override
+        public void cache(String key, String value) {
+            values.put(key, value);
+        }
+
+        @Override
+        public String get(String key) {
+            return values.get(key);
+        }
+
+        @Override
+        public boolean containsKey(String key) {
+            return values.containsKey(key);
+        }
+
+        @Override
+        public void expire(String key) {
+            values.remove(key);
+        }
     }
 }

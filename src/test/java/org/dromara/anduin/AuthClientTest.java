@@ -1,5 +1,6 @@
 package org.dromara.anduin;
 
+import com.sun.net.httpserver.HttpServer;
 import org.dromara.anduin.cache.AuthDefaultStateCache;
 import org.dromara.anduin.cache.AuthStateCache;
 import org.dromara.anduin.config.AuthConfig;
@@ -11,10 +12,9 @@ import org.dromara.anduin.request.AuthGithubRequest;
 import org.dromara.anduin.utils.AuthStateUtils;
 import org.junit.jupiter.api.Test;
 
-import com.sun.net.httpserver.HttpServer;
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -150,7 +150,9 @@ class AuthClientTest {
         }
     }
 
-    /** 使用内置 Gitea 平台和本地 HTTP 服务验证登录链路，不访问外网。 */
+    /**
+     * 使用内置 Gitea 平台和本地 HTTP 服务验证登录链路，不访问外网。
+     */
     private static class LocalGitea implements AutoCloseable {
         private final HttpServer server;
         private final AuthConfig config;
@@ -164,14 +166,18 @@ class AuthClientTest {
                 byte[] body = tokenResponse.getBytes(StandardCharsets.UTF_8);
                 exchange.getResponseHeaders().set("Content-Type", "application/json");
                 exchange.sendResponseHeaders(200, body.length);
-                try (var output = exchange.getResponseBody()) { output.write(body); }
+                try (var output = exchange.getResponseBody()) {
+                    output.write(body);
+                }
                 exchange.close();
             });
             server.createContext("/login/oauth/userinfo", exchange -> {
                 byte[] body = "{\"id\":42,\"login\":\"test\"}".getBytes(StandardCharsets.UTF_8);
                 exchange.getResponseHeaders().set("Content-Type", "application/json");
                 exchange.sendResponseHeaders(200, body.length);
-                try (var output = exchange.getResponseBody()) { output.write(body); }
+                try (var output = exchange.getResponseBody()) {
+                    output.write(body);
+                }
                 exchange.close();
             });
             config = config();
@@ -183,15 +189,29 @@ class AuthClientTest {
             return new AuthClient(Map.of("gitea", config));
         }
 
-        public void close() { server.stop(0); }
+        public void close() {
+            server.stop(0);
+        }
     }
 
     private static class MemoryStateCache implements AuthStateCache {
         private final Map<String, String> entries = new HashMap<>();
-        public void cache(String key, String value) { entries.put(key, value); }
-        public String get(String key) { return entries.get(key); }
-        public boolean containsKey(String key) { return entries.containsKey(key); }
-        public void expire(String key) { entries.remove(key); }
+
+        public void cache(String key, String value) {
+            entries.put(key, value);
+        }
+
+        public String get(String key) {
+            return entries.get(key);
+        }
+
+        public boolean containsKey(String key) {
+            return entries.containsKey(key);
+        }
+
+        public void expire(String key) {
+            entries.remove(key);
+        }
     }
 
 }
