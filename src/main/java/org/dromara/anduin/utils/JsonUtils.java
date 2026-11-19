@@ -22,7 +22,8 @@
 package org.dromara.anduin.utils;
 
 import org.apache.commons.lang3.ObjectUtils;
-import org.dromara.anduin.log.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.JsonParser;
 import tools.jackson.core.json.JsonReadFeature;
@@ -44,6 +45,8 @@ import java.util.function.Function;
  * @author gengwei.zheng
  */
 public class JsonUtils {
+
+    private static final Logger log = LoggerFactory.getLogger(JsonUtils.class);
 
     private static volatile JsonUtils instance;
 
@@ -89,7 +92,7 @@ public class JsonUtils {
         try {
             return getObjectMapper().writeValueAsString(domain);
         } catch (JacksonException e) {
-            Log.error("Jackson json processing error, when to json! {}", e);
+            log.error("Jackson json processing error, when to json! {}", e.getMessage());
             return null;
         }
     }
@@ -102,7 +105,7 @@ public class JsonUtils {
         try {
             return getObjectMapper().convertValue(content, valueType);
         } catch (IllegalArgumentException e) {
-            Log.error("Jackson toObject use STRING with valueType processing error! {}", e);
+            log.error("Jackson toObject use STRING with valueType processing error! {}", e.getMessage());
             return null;
         }
     }
@@ -111,7 +114,7 @@ public class JsonUtils {
         try {
             return getObjectMapper().readValue(content, valueType);
         } catch (JacksonException e) {
-            Log.error("Jackson json processing error, when to object with value type! {}", e);
+            log.error("Jackson json processing error, when to object with value type! {}", e.getMessage());
             return null;
         }
     }
@@ -120,7 +123,7 @@ public class JsonUtils {
         try {
             return getObjectMapper().readValue(content, typeReference);
         } catch (JacksonException e) {
-            Log.error("Jackson toObject use STRING with typeReference processing error! {}", e);
+            log.error("Jackson toObject use STRING with typeReference processing error! {}", e.getMessage());
             return null;
         }
     }
@@ -129,7 +132,7 @@ public class JsonUtils {
         try {
             return getObjectMapper().readValue(content, javaType);
         } catch (JacksonException e) {
-            Log.error("Jackson toObject use STRING with javaType processing error! {}", e);
+            log.error("Jackson toObject use STRING with javaType processing error! {}", e.getMessage());
             return null;
         }
     }
@@ -138,7 +141,7 @@ public class JsonUtils {
         try {
             return getObjectMapper().readValue(bytes, valueType);
         } catch (JacksonException e) {
-            Log.error("Jackson toObject use BYTE_ARRAY with class processing catch IO error {}.", e);
+            log.error("Jackson toObject use BYTE_ARRAY with class processing catch IO error {}.", e.getMessage());
             return null;
         }
     }
@@ -147,7 +150,7 @@ public class JsonUtils {
         try {
             return getObjectMapper().readValue(bytes, typeReference);
         } catch (JacksonException e) {
-            Log.error("Jackson toObject use BYTE_ARRAY with typeReference processing catch IO error {}.", e);
+            log.error("Jackson toObject use BYTE_ARRAY with typeReference processing catch IO error {}.", e.getMessage());
             return null;
         }
     }
@@ -156,7 +159,7 @@ public class JsonUtils {
         try {
             return getObjectMapper().readValue(bytes, javaType);
         } catch (JacksonException e) {
-            Log.error("Jackson toObject use BYTE_ARRAY with javaType processing catch IO error {}.", e);
+            log.error("Jackson toObject use BYTE_ARRAY with javaType processing catch IO error {}.", e.getMessage());
             return null;
         }
     }
@@ -165,7 +168,7 @@ public class JsonUtils {
         try {
             return getObjectMapper().readValue(inputStream, valueType);
         } catch (JacksonException e) {
-            Log.error("Jackson toObject use INPUT_STREAM with class processing catch IO error {}.", e);
+            log.error("Jackson toObject use INPUT_STREAM with class processing catch IO error {}.", e.getMessage());
             return null;
         }
     }
@@ -174,7 +177,7 @@ public class JsonUtils {
         try {
             return getObjectMapper().readValue(inputStream, typeReference);
         } catch (JacksonException e) {
-            Log.error("Jackson toObject use INPUT_STREAM with typeReference processing catch IO error {}.", e);
+            log.error("Jackson toObject use INPUT_STREAM with typeReference processing catch IO error {}.", e.getMessage());
             return null;
         }
     }
@@ -183,7 +186,7 @@ public class JsonUtils {
         try {
             return getObjectMapper().readValue(inputStream, javaType);
         } catch (JacksonException e) {
-            Log.error("Jackson toObject use INPUT_STREAM with javaType processing catch IO error {}.", e);
+            log.error("Jackson toObject use INPUT_STREAM with javaType processing catch IO error {}.", e.getMessage());
             return null;
         }
     }
@@ -233,7 +236,7 @@ public class JsonUtils {
         try {
             return getObjectMapper().readTree(content);
         } catch (JacksonException e) {
-            Log.error("Jackson toNode use STRING processing catch json error {}.", e);
+            log.error("Jackson toNode use STRING processing catch json error {}.", e.getMessage());
             return null;
         }
     }
@@ -242,7 +245,7 @@ public class JsonUtils {
         try {
             return getObjectMapper().readTree(bytes);
         } catch (JacksonException e) {
-            Log.error("Jackson toNode use STRING processing catch io error {}.", e);
+            log.error("Jackson toNode use STRING processing catch io error {}.", e.getMessage());
             return null;
         }
     }
@@ -251,7 +254,7 @@ public class JsonUtils {
         try {
             return getObjectMapper().readTree(jsonParser);
         } catch (JacksonException e) {
-            Log.error("Jackson toNode use JsonParser processing catch io error {}.", e);
+            log.error("Jackson toNode use JsonParser processing catch io error {}.", e.getMessage());
             return null;
         }
     }
@@ -260,7 +263,7 @@ public class JsonUtils {
         try {
             return getObjectMapper().createParser(content);
         } catch (JacksonException e) {
-            Log.error("Jackson io error, when create parser! {}", e);
+            log.error("Jackson io error, when create parser! {}", e.getMessage());
             return null;
         }
     }

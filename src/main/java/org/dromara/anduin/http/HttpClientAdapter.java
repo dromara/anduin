@@ -1,6 +1,10 @@
 package org.dromara.anduin.http;
 
+import com.google.common.net.HttpHeaders;
+import org.dromara.anduin.constant.MediaType;
+
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -20,19 +24,19 @@ public interface HttpClientAdapter {
      */
     default AdapterHttpResponse postForm(String url, Map<String, String> params, HttpHeader header) {
         String body = params == null ? "" : params.entrySet().stream()
-                .map(entry -> URLEncoder.encode(entry.getKey(), HttpConstants.DEFAULT_ENCODING) + "="
+                .map(entry -> URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8) + "="
                         + URLEncoder.encode(entry.getValue() == null ? "" : entry.getValue(),
-                        HttpConstants.DEFAULT_ENCODING))
+                        StandardCharsets.UTF_8))
                 .collect(Collectors.joining("&"));
         HttpHeader formHeader = new HttpHeader();
         if (header != null) {
             header.getHeaders().forEach((key, value) -> {
-                if (!HttpConstants.CONTENT_TYPE.equalsIgnoreCase(key)) {
+                if (!HttpHeaders.CONTENT_TYPE.equalsIgnoreCase(key)) {
                     formHeader.add(key, value);
                 }
             });
         }
-        formHeader.add(HttpConstants.CONTENT_TYPE, "application/x-www-form-urlencoded");
+        formHeader.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED);
         return post(url, body, formHeader);
     }
 
@@ -42,7 +46,7 @@ public interface HttpClientAdapter {
      * @param url URL
      * @return 结果
      */
-    public AdapterHttpResponse get(String url);
+    AdapterHttpResponse get(String url);
 
     /**
      * GET 请求
@@ -52,7 +56,7 @@ public interface HttpClientAdapter {
      * @param encode 是否需要 url encode
      * @return 结果
      */
-    public AdapterHttpResponse get(String url, Map<String, String> params, boolean encode);
+    AdapterHttpResponse get(String url, Map<String, String> params, boolean encode);
 
     /**
      * GET 请求
@@ -63,7 +67,7 @@ public interface HttpClientAdapter {
      * @param encode 是否需要 url encode
      * @return 结果
      */
-    public AdapterHttpResponse get(String url, Map<String, String> params, HttpHeader header, boolean encode);
+    AdapterHttpResponse get(String url, Map<String, String> params, HttpHeader header, boolean encode);
 
     /**
      * POST 请求
@@ -71,7 +75,7 @@ public interface HttpClientAdapter {
      * @param url URL
      * @return 结果
      */
-    public AdapterHttpResponse post(String url);
+    AdapterHttpResponse post(String url);
 
     /**
      * POST 请求
@@ -80,7 +84,7 @@ public interface HttpClientAdapter {
      * @param data JSON 参数
      * @return 结果
      */
-    public AdapterHttpResponse post(String url, String data);
+    AdapterHttpResponse post(String url, String data);
 
     /**
      * POST 请求
@@ -90,7 +94,7 @@ public interface HttpClientAdapter {
      * @param header 请求头
      * @return 结果
      */
-    public AdapterHttpResponse post(String url, String data, HttpHeader header);
+    AdapterHttpResponse post(String url, String data, HttpHeader header);
 
     /**
      * POST 请求
@@ -100,7 +104,7 @@ public interface HttpClientAdapter {
      * @param encode 是否需要 url encode
      * @return 结果
      */
-    public AdapterHttpResponse post(String url, Map<String, String> params, boolean encode);
+    AdapterHttpResponse post(String url, Map<String, String> params, boolean encode);
 
     /**
      * POST 请求
@@ -111,5 +115,5 @@ public interface HttpClientAdapter {
      * @param encode 是否需要 url encode
      * @return 结果
      */
-    public AdapterHttpResponse post(String url, Map<String, String> params, HttpHeader header, boolean encode);
+    AdapterHttpResponse post(String url, Map<String, String> params, HttpHeader header, boolean encode);
 }

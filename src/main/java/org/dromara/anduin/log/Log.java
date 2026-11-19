@@ -19,6 +19,7 @@ import java.time.format.DateTimeFormatter;
  * @see Log#error(String, Throwable)
  * @since 1.10.0
  */
+@Deprecated
 public class Log {
 
     public static void debug(String msg) {

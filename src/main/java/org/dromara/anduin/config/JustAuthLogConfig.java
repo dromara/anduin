@@ -7,6 +7,7 @@ import org.dromara.anduin.log.Log;
  *
  * @author HeJin
  */
+@Deprecated
 public class JustAuthLogConfig {
 
     /**

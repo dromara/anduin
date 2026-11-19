@@ -8,10 +8,10 @@ import org.dromara.anduin.config.AuthSource;
 import org.dromara.anduin.constant.Keys;
 import org.dromara.anduin.enums.AuthResponseStatus;
 import org.dromara.anduin.exception.AuthException;
+import org.dromara.anduin.http.HttpHeader;
 import org.dromara.anduin.http.HttpUrlEncoding;
 import org.dromara.anduin.http.UnifiedHttpClient;
 import org.dromara.anduin.http.UrlBuilder;
-import org.dromara.anduin.log.Log;
 import org.dromara.anduin.model.AuthCallback;
 import org.dromara.anduin.model.AuthResponse;
 import org.dromara.anduin.model.AuthToken;
@@ -20,6 +20,8 @@ import org.dromara.anduin.utils.AuthChecker;
 import org.dromara.anduin.utils.JsonNodeUtils;
 import org.dromara.anduin.utils.JsonUtils;
 import org.dromara.anduin.utils.UuidUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import tools.jackson.databind.JsonNode;
 
 import java.util.HashMap;
@@ -34,6 +36,9 @@ import java.util.Map;
  * @since 1.0.0
  */
 public abstract class AuthDefaultRequest implements AuthRequest {
+
+    private static final Logger log = LoggerFactory.getLogger(AuthDefaultRequest.class);
+
     protected AuthConfig config;
     protected AuthSource source;
     protected AuthStateCache authStateCache;
@@ -198,7 +203,7 @@ public abstract class AuthDefaultRequest implements AuthRequest {
             AuthUser user = this.getUserInfo(authToken);
             return AuthResponse.<AuthUser>builder().code(AuthResponseStatus.SUCCESS.getCode()).data(user).build();
         } catch (Exception e) {
-            Log.error("Failed to login with oauth authorization.", e);
+            log.error("Failed to login with oauth authorization.", e);
             return this.responseError(e);
         }
     }
@@ -327,8 +332,48 @@ public abstract class AuthDefaultRequest implements AuthRequest {
      * @param code code码
      * @return Response
      */
+    protected String doPostAuthorizationCode(String code, HttpHeader header) {
+        return UnifiedHttpClient.getAdapter().post(accessTokenUrl(code), null, header).getBody();
+    }
+
+    /**
+     * 通用的 refreshToken 协议
+     *
+     * @param refreshToken 刷新 Token
+     * @return Response
+     */
+    protected String doPostRefreshToken(String refreshToken) {
+        return UnifiedHttpClient.getAdapter().post(refreshTokenUrl(refreshToken)).getBody();
+    }
+
+    /**
+     * 通用的 refreshToken 协议
+     *
+     * @param refreshToken 刷新 Token
+     * @return Response
+     */
+    protected String doPostRefreshToken(String refreshToken, HttpHeader header) {
+        return UnifiedHttpClient.getAdapter().post(refreshTokenUrl(refreshToken), null, header).getBody();
+    }
+
+    /**
+     * 通用的 authorizationCode 协议
+     *
+     * @param code code码
+     * @return Response
+     */
     protected String doGetAuthorizationCode(String code) {
         return UnifiedHttpClient.getAdapter().get(accessTokenUrl(code)).getBody();
+    }
+
+    /**
+     * 通用的 authorizationCode 协议
+     *
+     * @param code code码
+     * @return Response
+     */
+    protected String doGetAuthorizationCode(String code, HttpHeader header) {
+        return UnifiedHttpClient.getAdapter().get(accessTokenUrl(code), null, header, false).getBody();
     }
 
     /**
@@ -337,7 +382,6 @@ public abstract class AuthDefaultRequest implements AuthRequest {
      * @param authToken token封装
      * @return Response
      */
-    @Deprecated
     protected String doPostUserInfo(AuthToken authToken) {
         return UnifiedHttpClient.getAdapter().post(userInfoUrl(authToken)).getBody();
     }
@@ -352,13 +396,16 @@ public abstract class AuthDefaultRequest implements AuthRequest {
         return UnifiedHttpClient.getAdapter().get(userInfoUrl(authToken)).getBody();
     }
 
+    protected String doGetUserInfo(AuthToken authToken, HttpHeader header) {
+        return UnifiedHttpClient.getAdapter().get(userInfoUrl(authToken), null, header, false).getBody();
+    }
+
     /**
      * 通用的post形式的取消授权方法
      *
      * @param authToken token封装
      * @return Response
      */
-    @Deprecated
     protected String doPostRevoke(AuthToken authToken) {
         return UnifiedHttpClient.getAdapter().post(revokeUrl(authToken)).getBody();
     }
