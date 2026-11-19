@@ -2,10 +2,15 @@
 
 - [重构] 使用第三方组件常量值，替换原有自定义常量
 - [重构] 使用 AuthRequest 定义的规范方式，重构部分第三方认证代码
+- [重构] 改用 slf4j 门面替换内置 Log 工具类，以便与 Spring Boot 等框架形成统一的日志体系
 
 - [升级] maven-surefire-plugin 版本升级至 3.6.1
-- [升级] alipay-sdk-java 版本升级至 4.40.1061.ALL
+- [升级] alipay-sdk-java 版本升级至 4.40.1067.ALL
 - [升级] guava 版本升级至 33.8.0-jre
+- [升级] bcpkix-jdk18on 版本升级至 1.87
+- [升级] bcprov-jdk18on 版本升级至 1.87
+- [升级] commons-lang3 版本升级至 3.22.0
+
 
 ## 2.2.0
 - 提取授权码模式获取 Token 参数定义通用方法，去除大量重复代码

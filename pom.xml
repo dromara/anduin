@@ -66,16 +66,17 @@
         <maven-surefire-plugin.version>3.6.1</maven-surefire-plugin.version>
 
         <alipay-sdk-java.version>4.40.1067.ALL</alipay-sdk-java.version>
-        <bcpkix-jdk18on.version>1.86</bcpkix-jdk18on.version>
-        <bcprov-jdk18on.version>1.86</bcprov-jdk18on.version>
+        <bcpkix-jdk18on.version>1.87</bcpkix-jdk18on.version>
+        <bcprov-jdk18on.version>1.87</bcprov-jdk18on.version>
         <commons-collections4.version>4.6.0</commons-collections4.version>
-        <commons-lang3.version>3.21.0</commons-lang3.version>
+        <commons-lang3.version>3.22.0</commons-lang3.version>
         <guava.version>33.8.0-jre</guava.version>
         <caffeine.version>3.3.1</caffeine.version>
         <jackson.version>3.2.4</jackson.version>
         <jjwt.version>0.13.0</jjwt.version>
         <junit.version>6.1.3</junit.version>
         <lombok.version>1.18.48</lombok.version>
+        <slf4j.version>2.0.20</slf4j.version>
 
     </properties>
 
@@ -161,6 +162,16 @@
                 <artifactId>jackson-databind</artifactId>
                 <version>${jackson.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -235,6 +246,16 @@
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-gson</artifactId>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

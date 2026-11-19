@@ -59,7 +59,7 @@ public final class AuthClient {
      * 授权与回调复用指定的缓存。集群部署需传入 Redis 等共享缓存的 AuthStateCache 实现，
      * 本 SDK 不绑定具体缓存框架。
      *
-     * @param configs 平台配置，键为内置平台名称，忽略大小写；值为完整的授权配置
+     * @param configs    平台配置，键为内置平台名称，忽略大小写；值为完整的授权配置
      * @param stateCache 共用的 state 缓存，为 null 时使用 AuthDefaultStateCache.INSTANCE
      * @throws AuthException 配置 Map 为空、平台名称为空白、配置值为 null，或平台名称忽略大小写后重复
      */
